@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="fragments/head :: header" />
+    <title>FilmAdmin</title>
+</head>
+
+<body class="d-flex flex-column h-100">
+    <header th:replace="fragments/nav.html :: nav"></header>
+
+    <main class="flex-shrink-0">
+        <div class="container d-flex">
+            <div class="cines">
+                <h1 class="mt-5">Listado de Cines</h1>
+                    <th:block th:each="ciudad, index : ${listaCiudades}">
+                        <th:block th:if="${index.first || (index.count - 1) % 2 == 0}" th:utext="'&lt;div class=&quot;d-flex&quot;&gt;'"/> 
+                        <div class="d-flex flex-column mt-5 me-5">
+                            <h2 th:text="${ciudad}">Ciudad</h2>
+                            <div th:each="cine : ${listaCines}" th:if="${#strings.toLowerCase(cine.ciudad)==#strings.toLowerCase(ciudad)}" class="cine d-flex align-items-center mt-3">
+                                <a th:href="@{/cines/{id}(id=${cine.id})}"> <img th:src="@{/cines/{id}/pic(id=${cine.id})}" alt="imagen cine" height="120px" width="84px" class="d-inline-block"> </a>
+                                <a th:text="${cine.nombre}" th:href="@{/cines/{id}(id=${cine.id})}" class="ms-2 bold text-dark">Cine</a>
+                            </div> 
+                        </div>
+                        <th:block th:if="${index.last || index.count % 2 == 0}" th:utext="'&lt;/div&gt;'" /> 
+                    </th:block>
+            </div>
+            <div th:if="${cineInfo!=null}" class="mapa-info ms-5">
+                <div class="d-flex justify-content-center mt-5"><h2 th:text="${cineInfo.nombre}" class="mt-5 titul">La Gavia</h2></div>
+                <div class="d-flex justify-content-center">
+                    <div id="map" class="mt-5"></div>
+                    <script th:inline="javascript">
+                        function initMap() {
+                                let pos = /*[[${cineInfo.coordenadas}]]*/ "0,0";
+                                let latlng = pos.split(",");
+                                var c = { lat: +latlng[0], lng: +latlng[1] };
+                                var map = new google.maps.Map(document.getElementById('map'), { zoom: 10, center: c });
+                                var marker = new google.maps.Marker({ position: c, map: map });
+                            
+                        }
+                    </script>
+                    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBUjNUeHPUbpzqhgSbJDHiDxvJbwVuiK9s&callback=initMap"></script>
+                    <div class="info mt-5 ms-5">
+                        <p><span class="bold">Dirección: </span> <span th:text="${cineInfo.direccion}">C/Adolfo Bioy Casares, 2, 28051</span>&nbsp;<span th:text="${cineInfo.ciudad}">Madrid</span></p>
+                        <p><span class="bold">Horario: </span><span th:text="${cineInfo.hora_apertura}">10:00</span> - <span th:text="${cineInfo.hora_cierre}">22:00</span></p>
+                        <p><span class="bold">Teléfono: </span><span th:text="${cineInfo.telefono}">914255401</span></p>
+                        <div id="carouselExampleSlidesOnly" class="carousel slide mt-5" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <img th:src="@{/img/imagencine.jpg}" src="/img/imagencine.jpg" class="d-block imgcarousel" alt="...">
+                                </div>
+                                <div class="carousel-item">
+                                    <img th:src="@{/img/imagencine2.jpg}" src="/img/imagencine2.jpg" class="d-block imgcarousel" alt="...">
+                                </div>
+                                <div class="carousel-item">
+                                    <img th:src="@{/img/imagencine3.jpg}" src="/img/imagencine3.jpg" class="d-block imgcarousel" alt="...">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            <div th:unless="${cineInfo!=null}" class="mapa-info ms-5 d-flex justify-content-center align-items-center">
+                <h5 class="ms-5">Selecciona un cine para ver su información</h5>
+            </div>
+        </div>  
+    </main>
+
+    <th:block th:replace="fragments/footer.html :: footer" />
+</body>
+
+</html>

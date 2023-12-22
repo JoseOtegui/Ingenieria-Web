@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="fragments/head :: header" />
+    <title>FilmAdmin</title>
+</head>
+
+<body class="d-flex flex-column h-100" onload="generarMapa();">
+    <header th:replace="fragments/nav.html :: nav"></header>
+
+    <main class="flex-shrink-0">
+        <div class="container">
+            <form method="POST" action="/entradas/compra-entradas/2" id="form-comprar" onsubmit="enviarAsientos(event);">
+                <h1 th:if="${sesion.dia_hora.minute &lt; 10}" th:text="${sesion.pelicula.titulo + ' - Sesión de las ' + sesion.dia_hora.hour + ':0' + sesion.dia_hora.minute}" class="mt-5">El buen patrón - Sesión de las 12:00</h1>
+                <h1 th:unless="${sesion.dia_hora.minute &lt; 10}" th:text="${sesion.pelicula.titulo + '- Sesión de las ' + sesion.dia_hora.hour + ':' + sesion.dia_hora.minute}" class="mt-5">El buen patrón - Sesión de las 12:00</h1>
+                <div class="d-flex align-items-center mt-5">
+                    <div class="d-flex flex-column ">
+                        <h5 th:text="${'Día: ' + #temporals.format(sesion.dia_hora, 'dd-MM-yy')}" class="">Día: 15/03/22</h5>
+                        <h5 th:text="${'Cine: ' + sesion.cine.nombre}" class="">Cine: La Gavia</h5>
+                        <h5 th:text="${sesion.sala.nombre}"class="">Sala 1</h5>
+                        <h6 class="mb-3">Precio entrada: <span id="precioentrada" th:text="${#numbers.formatDecimal(sesion.precioEntrada,2,2)}">11.00</span>€</h6>
+                        <div class="d-flex mb-4">
+                            <button type="button" class="btn btn-dark botoncantidad me-2" id="botonmas" onclick="botonmass()">+</button>
+                            <button type="button" class="btn btn-dark botoncantidad me-2" id="botonmenos" onclick="botonmenoss()">-</button>
+                            <input id="inputcantidad" class="form-control inputcantidad" type="text" value="0"
+                                aria-label="readonly input example">
+                        </div>
+                        <input type="text" class="form-control mb-4" id="inputpromociones"
+                            placeholder="Códigos y cupones promocionales">
+                        <h6 class="">Subtotal: <span id="subtotal">0.00</span>€</h6>
+                        <h6 class="">Descuentos: -0,00€</h6>
+                        <h5 class="bold">Precio final: <span id="preciofinal">0.00</span>€</h5>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <div class="d-flex flex-column seat-selector">
+                            <svg id="asientos" width="640" height="360">
+                                <!-- Aqui se crean las butacas en crearAsientos() en funcionesAsientos.js -->
+                            </svg>
+                            <div class="d-flex justify-content-center align-items-center screen">
+                                <h5 class="text-light">PANTALLA</h5>
+                            </div>
+                            <div class="d-flex justify-content-center align-items-center mt-2">
+                                <div class="d-flex libre me-3">
+                                    <div class="muestra ms-3 me-1"></div>
+                                    <h6>LIBRE</h6>
+                                </div>
+                                <div class="d-flex seleccionado me-3">
+                                    <div class="muestraselec me-1"></div>
+                                    <h6>SELECCIONADO</h6>
+                                </div>
+                                <div class="d-flex ocupado me-2">
+                                    <div class="muestraocup me-1"></div>
+                                    <h6>OCUPADO</h6>
+                                </div>
+                                <div class="d-flex clickizq me-3">
+                                    <div class="me-1 d-flex align-items-center"><img th:src="@{/img/clickizq.png}" src="/img/clickizq.png" alt="Click Izquierdo" width="16" height="16"></div>
+                                    <h6>SELECCIONAR</h6>
+                                </div>
+                                <div class="d-flex clickder me-3">
+                                    <div class="me-1 d-flex align-items-center"><img th:src="@{/img/clickder.png}" src="/img/clickder.png" alt="Click Derecho" width="16" height="16"></div>
+                                    <h6>DESELECCIONAR</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-dark btn-lg mt-5" id="botoncomprar" disabled>Comprar</button>
+                </div>
+            </form>
+        </div>
+    </main>
+    <th:block th:replace="fragments/footer.html :: footer" />
+    <script async type="text/javascript" th:src="@{/js/funcionesAsientos.js}"></script>
+</body>
+
+</html>
